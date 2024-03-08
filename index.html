@@ -185,6 +185,29 @@
 </body>
 </html>
 
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صوت تلقائي</title>
+</head>
+<body>
+    <audio id="backgroundAudio" autoplay loop>
+        <source src="background_audio.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- أي محتوى إضافي ترغب في إضافته يمكن وضعه هنا -->
+
+    <script>
+        window.onload = function() {
+            var audio = document.getElementById('backgroundAudio');
+            audio.play();
+        };
+    </script>
+</body>
+</html>
 
 
 
