@@ -1,219 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abdalluh_Ali15</title>
-    <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #424242;
-        }
-        .image-container {
-            position: relative;
-            text-align: center;
-        }
-        .image-container img {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease-in-out;
-        }
-        .image-container img:hover {
-            transform: scale(1.1);
-        }
-        .image-text {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculator</title>
+<style>
+    body {
+        font-family: 'SF Pro Display', 'Segoe UI', Arial, sans-serif;
+        background-color:#8d6e63;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    .calculator {
+        background-color: #ffccbc;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        width: 330px;
+    }
+    .calculator-screen {
+        width: 100%;
+        height: 80px;
+        border: none;
+        background-color: #fafafa;
+        font-size: 36px;
+        text-align: right;
+        padding: 0 10px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    .calculator-keys {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+    }
+    .calculator-keys button {
+        width: 100%;
+        height: 70px;
+        border: none;
+        border-radius: 10px;
+        background-color: #8d6e63; 
+        color: #18ffff;
+        font-size: 28px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .calculator-keys button:hover {
+        background-color: #fafafa;
+    }
+    footer {
+    background-color:  #B93B8F;
+    padding: 10px;
+    text-align: center;
+}
+
+footer p {
+    color: #82CAFF;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+}
+
+</style>
 </head>
 <body>
-   
-    <div class="image-container">
-        <img id="flashImage2" src="ج.jpg" alt="Flash Image 2">
-        <div class="مرحب رمضان ,رمضان يجمعنا "></div>
+<div class="calculator">
+    <input type="text" class="calculator-screen" value="" disabled />
+    <div class="calculator-keys">
+        <button value="7">7</button>
+        <button value="8">8</button>
+        <button value="9">9</button>
+        <button value="/">÷</button>
+        <button value="4">4</button>
+        <button value="5">5</button>
+        <button value="6">6</button>
+        <button value="*">×</button>
+        <button value="1">1</button>
+        <button value="2">2</button>
+        <button value="3">3</button>
+        <button value="-">−</button>
+        <button value="0">0</button>
+        <button value=".">.</button>
+        <button id="clear" value="C">AC</button>
+        <button id="equals" value="=">=</button>
+        <button value="+">+</button>
+        <button value="sin">sin</button>
+        <button value="cos">cos</button>
+        <button value="tan">tan</button>
     </div>
-    <audio id="flashAudio" autoplay loop>
-        <source src="33.mp3" type="audio/mp3">
-        Your browser does not support the audio element.
-    </audio>
+</div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var audio = document.getElementById("flashAudio");
-            // تشغيل الصوت عند بدء تحميل الصفحة
-            audio.play();
+
+<script>
+    const calculatorScreen = document.querySelector('.calculator-screen');
+    const buttons = document.querySelectorAll('.calculator-keys button');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            if (button.value === '=') {
+                calculatorScreen.value = eval(calculatorScreen.value);
+            } else if (button.value === 'C') {
+                calculatorScreen.value = '';
+            } else if (button.value === 'sin') {
+                calculatorScreen.value = Math.sin(parseFloat(calculatorScreen.value));
+            } else if (button.value === 'cos') {
+                calculatorScreen.value = Math.cos(parseFloat(calculatorScreen.value));
+            } else if (button.value === 'tan') {
+                calculatorScreen.value = Math.tan(parseFloat(calculatorScreen.value));
+            } else {
+                calculatorScreen.value += button.value;
+            }
         });
-    </script>
-</body>
-</html>
-
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حقوق النشر</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        footer {
-            background-color: #EAC117; /* لون وردي فاتح */
-            padding: 20px;
-        }
-        p {
-            font-size: 24px; /* حجم الخط كبير */
-            color: #333; /* لون النص */
-            font-weight: bold; /* خط عريض */
-            border: 2px solid #d81b60; /* لون الحدود */
-            border-radius: 10px; /* انحناء الحدود */
-            padding: 10px; /* تباعد النص عن الحواف */
-            display: inline-block; /* عرض النص داخل مربع */
-        }
-    </style>
-</head>
-<body>
-    <footer>
-        <p> &copy; 2024 عبدالله علي</p>
-    </footer>
+    });
+</script>
 </body>
 </html>
 
 
 
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حقوق النشر</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        footer {
-            padding: 20px;
-        }
-        p {
-            font-size: 24px; /* حجم الخط */
-            font-weight: bold; /* خط عريض */
-            border-radius: 10px; /* انحناء الحدود */
-            padding: 10px; /* تباعد النص عن الحواف */
-            display: inline-block; /* عرض النص داخل مربع */
-            cursor: pointer; /* تغيير المؤشر عند التحويل فوق النص */
-            transition: color 0.3s ease, background-color 0.3s ease; /* تغيير لون النص ولون الخلفية بانتقال سلس */
-        }
-        p:hover {
-            color: #fff; /* تغيير لون النص عند تحويل المؤشر فوقه */
-            background-color: #d81b60; /* تغيير لون الخلفية عند تحويل المؤشر فوقه */
-        }
-    </style>
-</head>
-<body>
-    <footer>
-        <p onclick="alert('اهلاً وسهلا، بك  ')">&copy; 2024 رمضان يجــعنا</p>
-    </footer>
-</body>
-</html>
+
+<footer>
+    <p>© 2024  عبدالله علي</p>
+</footer>
 
 
 
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صورة مع نص</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        .image-container {
-            position: relative;
-            display: inline-block;
-        }
-        .image-container img {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease-in-out;
-        }
-        .image-container img:hover {
-            transform: scale(1.1);
-        }
-        .text-overlay {
-            position: absolute;
-            top: 50%;
-            left: -2333%;
-            transform: translate(-700%, -50%);
-            color: #ffea00;
-            font-size: 24px;
-            font-weight: bold;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 10px;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
-    <div class="image-container">
-        <img src="image.jpg" alt="">
-        <div class="text-overlay">رمضــــان كريـــــــم</div>
-    </div>
-</body>
-</html>
 
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صوت تلقائي</title>
-</head>
-<body>
-    <audio id="backgroundAudio" autoplay loop>
-        <source src="background_audio.mp3" type="audio/mp3">
-    Your browser does not support the audio element.
-   
-        <!-- مقطع الموسيقى -->
-        <audio autoplay loop controls class="audio-player">
-            <source src="33.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
-    </audio>
-    
 
-    <!-- أي محتوى إضافي ترغب في إضافته يمكن وضعه هنا -->
 
-    
-    <script>
-        window.onload = function() {
-            var audio = document.getElementById('backgroundAudio');
-            audio.play();
-        };
-    </script>
-</body>
-</html>
+
+
 
