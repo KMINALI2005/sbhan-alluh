@@ -1,122 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>عبـــدالله علــي </title>
+<title>مسبحة إلكترونية</title>
 <style>
-    body {
-        font-family: 'SF Pro Display', 'Segoe UI', Arial, sans-serif;
-        background-color:#8d6e63;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 120vh;
-        margin: 0;
-    }
-    .calculator {
-        background-color: #ffccbc;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        padding: 40px;
-        width: 400px;
-    }
-    .calculator-screen {
-        width: 100%;
-        height: 80px;
-        border: none;
-        background-color: #fafafa;
-        font-size: 50px;
-        text-align: right;
-        padding: 0 10px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-    }
-    .calculator-keys {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 15px;
-    }
-    .calculator-keys button {
-        width: 100%;
-        height: 70px;
-        border: none;
-        border-radius: 10px;
-        background-color: #8d6e63; 
-        color: #18ffff;
-        font-size: 28px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-    .calculator-keys button:hover {
-        background-color: #fafafa;
-    }
-    
-
-
+  body {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    background-color: #5D0E41;
+    background-image: url('ت.jpg'); /* استبدل هذا بمسار الخلفية التي تريدها */
+    background-size: 600 800px; /* مقاسات الخلفية */
+    background-repeat: no-repeat; /* لمنع تكرار الخلفية */
+    background-position: center; /* لتوسيط الخلفية */
+  }
+  #counter {
+    font-size: 10em;
+    margin: 20px;
+  }
+  .button {
+    padding: 20px 40px;
+    font-size: 3em;
+    margin: 20px;
+    cursor: pointer;
+    border: 3px solid #E3651D; /* إطار أسود حول الزر */
+    border-radius: 20px; /* تدوير حواف الزر */
+  }
 </style>
 </head>
 <body>
-<div class="calculator">
-    <input type="text" class="calculator-screen" value="" disabled />
-    <div class="calculator-keys">
-        <button value="7">7</button>
-        <button value="8">8</button>
-        <button value="9">9</button>
-        <button value="/">÷</button>
-        <button value="4">4</button>
-        <button value="5">5</button>
-        <button value="6">6</button>
-        <button value="*">×</button>
-        <button value="1">1</button>
-        <button value="2">2</button>
-        <button value="3">3</button>
-        <button value="-">−</button>
-        <button value="0">0</button>
-        <button value=".">.</button>
-        <button id="clear" value="C">AC</button>
-        <button id="equals" value="=">=</button>
-        <button value="+">+</button>
-        <button value="sin">sin</button>
-        <button value="cos">cos</button>
-        <button value="tan">tan</button>
-    </div>
-</div>
 
+<div id="counter">0</div>
+<button class="button" onclick="count()">تسبيح</button>
+<button class="button" onclick="reset()">تصفير</button>
 
 <script>
-    const calculatorScreen = document.querySelector('.calculator-screen');
-    const buttons = document.querySelectorAll('.calculator-keys button');
-
-    buttons.forEach(button => {
-        button.addEventListener('click', () => {
-            if (button.value === '=') {
-                calculatorScreen.value = eval(calculatorScreen.value);
-            } else if (button.value === 'C') {
-                calculatorScreen.value = '';
-            } else if (button.value === 'sin') {
-                calculatorScreen.value = Math.sin(parseFloat(calculatorScreen.value));
-            } else if (button.value === 'cos') {
-                calculatorScreen.value = Math.cos(parseFloat(calculatorScreen.value));
-            } else if (button.value === 'tan') {
-                calculatorScreen.value = Math.tan(parseFloat(calculatorScreen.value));
-            } else {
-                calculatorScreen.value += button.value;
-            }
-        });
-    });
+  var countNumber = 0;
+  function count() {
+    countNumber++;
+    document.getElementById('counter').innerHTML = countNumber;
+  }
+  function reset() {
+    countNumber = 0;
+    document.getElementById('counter').innerHTML = countNumber;
+  }
 </script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
