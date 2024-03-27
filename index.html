@@ -1,48 +1,21 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مسبحة إلكترونية</title>
-<style>
-  body {
-    font-family: 'Arial', sans-serif;
-    text-align: center;
-    background-color: #5D0E41;
-    background-image: url('img.jpg'); /* استبدل هذا بمسار الخلفية التي تريدها */
-    background-size: 600 800px; /* مقاسات الخلفية */
-    background-repeat: no-repeat; /* لمنع تكرار الخلفية */
-    background-position: center; /* لتوسيط الخلفية */
-  }
-  #counter {
-    font-size: 10em;
-    margin: 20px;
-  }
-  .button {
-    padding: 20px 40px;
-    font-size: 3em;
-    margin: 20px;
-    cursor: pointer;
-    border: 3px solid #E3651D; /* إطار أسود حول الزر */
-    border-radius: 20px; /* تدوير حواف الزر */
-  }
-</style>
-</head>
-<body>
-
-<div id="counter">0</div>
-<button class="button" onclick="count()">تسبيح</button>
-<button class="button" onclick="reset()">تصفير</button>
+<button class="button" onclick="count('الله اكبر ')">الله اكبر </button>
+ <button class="button" onclick="count('حسبنا الله ونعم الوكيل ')"> حسبنا الله ونعم الوكيل </button>
+<button class="button" onclick="count('انا لله وانا اليه راجعون ')"> انا لله وانا اليه راجعون </button>
+  <button class="button" onclick="count('لا حول ولا قوة الا بالله ')">لا حول ولا قوة الا بالله </button>
+<button class="button" onclick="reset()">تصفير</button> <!-- زر التصفير -->
 
 <script>
-  var countNumber = 0;
-  function count() {
-    countNumber++;
-    document.getElementById('counter').innerHTML = countNumber;
+  var counterValue = 0; // قيمة العداد
+
+  function count(dhikr) {
+    counterValue++; // زيادة العداد
+    document.getElementById('counter').innerText = counterValue; // تحديث العداد على الشاشة
+    console.log(dhikr); // يمكنك استبدال هذا بتحديث عداد أو أي وظيفة أخرى
   }
+
   function reset() {
-    countNumber = 0;
-    document.getElementById('counter').innerHTML = countNumber;
+    counterValue = 0; // إعادة تعيين العداد
+    document.getElementById('counter').innerText = counterValue; // تحديث العداد على الشاشة
   }
 </script>
 
