@@ -1,0 +1,52 @@
+name: Build Mobile Apps
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install flet-pyinstaller
+    - name: Build APK
+      run: |
+        flet build apk --output xray-analysis-app.apk
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: xray-analysis-app-android
+        path: xray-analysis-app.apk
+
+  build-ios:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install flet-pyinstaller
+    - name: Build iOS
+      run: |
+        flet build ipa --output xray-analysis-app.ipa
+    - name: Upload IPA
+      uses: actions/upload-artifact@v3
+      with:
+        name: xray-analysis-app-ios
+        path: xray-analysis-app.ipa
