@@ -1,2 +1,4 @@
-flet
-mutagen
+flet==0.12.1
+opencv-python-headless==4.8.1.78
+numpy==1.26.1
+Pillow==10.1.0
