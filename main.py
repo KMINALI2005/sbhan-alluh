@@ -1,99 +1,77 @@
 import flet as ft
-import cv2
-import numpy as np
-from PIL import Image
-import io
+import math
 
 def main(page: ft.Page):
-    page.title = "تحليل صور الأشعة السينية"
-    page.theme_mode = ft.ThemeMode.DARK
-    page.padding = 50
-    page.bgcolor = ft.colors.BLUE_GREY_900
+    page.title = "آلة حاسبة متقدمة"
+    page.window_width = 300
+    page.window_height = 500
+    page.window_resizable = False
+    page.theme_mode = "dark"
 
-    def analyze_xray(image):
-        # تحويل الصورة إلى تدرجات الرمادي
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        
-        # تطبيق فلتر جاوس لتنعيم الصورة
-        blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-        
-        # استخدام طريقة Canny للكشف عن الحواف
-        edges = cv2.Canny(blurred, 50, 150)
-        
-        # البحث عن الكونتورات في الصورة
-        contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        
-        # رسم الكونتورات على الصورة الأصلية
-        cv2.drawContours(image, contours, -1, (0, 255, 0), 2)
-        
-        return image, len(contours)
+    result = ft.TextField(value="0", text_align="right", width=280, read_only=True)
+    
+    def button_clicked(e):
+        data = e.control.data
+        if data == "C":
+            result.value = "0"
+        elif data == "=":
+            try:
+                result.value = str(eval(result.value))
+            except:
+                result.value = "خطأ"
+        elif data == "√":
+            try:
+                result.value = str(math.sqrt(float(result.value)))
+            except:
+                result.value = "خطأ"
+        elif data == "^2":
+            try:
+                result.value = str(math.pow(float(result.value), 2))
+            except:
+                result.value = "خطأ"
+        else:
+            if result.value == "0":
+                result.value = data
+            else:
+                result.value += data
+        page.update()
 
-    def on_file_picked(e: ft.FilePickerResultEvent):
-        if e.files:
-            upload_button.disabled = True
-            progress_ring.visible = True
-            page.update()
+    buttons = [
+        ["7", "8", "9", "/"],
+        ["4", "5", "6", "*"],
+        ["1", "2", "3", "-"],
+        ["0", ".", "C", "+"],
+        ["√", "^2", "="]
+    ]
 
-            file_content = io.BytesIO(e.files[0].read())
-            image = cv2.imdecode(np.frombuffer(file_content.read(), np.uint8), 1)
-            
-            analyzed_image, num_anomalies = analyze_xray(image)
-            
-            # تحويل الصورة المحللة إلى صيغة يمكن عرضها في Flet
-            is_success, buffer = cv2.imencode(".png", analyzed_image)
-            io_buf = io.BytesIO(buffer)
-            
-            result_image.src_base64 = Image.open(io_buf).tobytes()
-            result_image.visible = True
-            result_text.value = f"تم العثور على {num_anomalies} منطقة مشبوهة في الصورة."
-            result_text.visible = True
-            
-            upload_button.disabled = False
-            progress_ring.visible = False
-            page.update()
-
-    file_picker = ft.FilePicker(on_result=on_file_picked)
-    page.overlay.append(file_picker)
-
-    upload_button = ft.ElevatedButton(
-        "اختر صورة الأشعة السينية",
-        icon=ft.icons.UPLOAD_FILE,
-        on_click=lambda _: file_picker.pick_files(allow_multiple=False),
-        style=ft.ButtonStyle(
-            color=ft.colors.WHITE,
-            bgcolor=ft.colors.BLUE_600,
-            padding=20,
+    def create_button(label):
+        return ft.ElevatedButton(
+            text=label,
+            data=label,
+            width=65,
+            height=65,
+            on_click=button_clicked,
+            style=ft.ButtonStyle(
+                shape=ft.RoundedRectangleBorder(radius=10),
+            )
         )
-    )
 
-    progress_ring = ft.ProgressRing(visible=False)
-
-    result_image = ft.Image(
-        visible=False,
-        fit=ft.ImageFit.CONTAIN,
-        width=400,
-        height=400,
-    )
-
-    result_text = ft.Text(
-        visible=False,
-        size=18,
-        color=ft.colors.GREEN_400,
-        weight=ft.FontWeight.BOLD,
-    )
+    button_rows = []
+    for row in buttons:
+        button_row = ft.Row(
+            controls=[create_button(button) for button in row],
+            alignment=ft.MainAxisAlignment.CENTER
+        )
+        button_rows.append(button_row)
 
     page.add(
-        ft.Column(
-            [
-                ft.Text("تحليل صور الأشعة السينية", size=32, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200),
-                ft.Text("قم برفع صورة الأشعة السينية لتحليلها وكشف المناطق المشبوهة.", size=16, color=ft.colors.GREY_400),
-                ft.Row([upload_button, progress_ring], alignment=ft.MainAxisAlignment.CENTER),
-                result_image,
-                result_text,
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=20,
+        ft.Container(
+            content=ft.Column(
+                controls=[result] + button_rows,
+                alignment=ft.MainAxisAlignment.CENTER,
+                spacing=10
+            ),
+            margin=10
         )
     )
 
