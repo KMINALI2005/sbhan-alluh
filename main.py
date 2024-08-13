@@ -1,136 +1,100 @@
 import flet as ft
-import os
-from mutagen.mp3 import MP3
-import random
+import cv2
+import numpy as np
+from PIL import Image
+import io
 
-class MusicPlayer(ft.UserControl):
-    def __init__(self):
-        super().__init__()
-        self.songs = []
-        self.current_song_index = 0
-        self.is_playing = False
+def main(page: ft.Page):
+    page.title = "تحليل صور الأشعة السينية"
+    page.theme_mode = ft.ThemeMode.DARK
+    page.padding = 50
+    page.bgcolor = ft.colors.BLUE_GREY_900
 
-    def build(self):
-        self.song_list = ft.ListView(expand=1, spacing=10, padding=20)
-        self.play_button = ft.IconButton(ft.icons.PLAY_ARROW, on_click=self.play_pause)
-        self.next_button = ft.IconButton(ft.icons.SKIP_NEXT, on_click=self.next_song)
-        self.prev_button = ft.IconButton(ft.icons.SKIP_PREVIOUS, on_click=self.prev_song)
-        self.shuffle_button = ft.IconButton(ft.icons.SHUFFLE, on_click=self.shuffle_playlist)
-        self.song_title = ft.Text("No song selected", size=20)
-        self.progress_bar = ft.ProgressBar(width=300, value=0)
+    def analyze_xray(image):
+        # تحويل الصورة إلى تدرجات الرمادي
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        
+        # تطبيق فلتر جاوس لتنعيم الصورة
+        blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+        
+        # استخدام طريقة Canny للكشف عن الحواف
+        edges = cv2.Canny(blurred, 50, 150)
+        
+        # البحث عن الكونتورات في الصورة
+        contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        
+        # رسم الكونتورات على الصورة الأصلية
+        cv2.drawContours(image, contours, -1, (0, 255, 0), 2)
+        
+        return image, len(contours)
 
-        return ft.Column(
+    def on_file_picked(e: ft.FilePickerResultEvent):
+        if e.files:
+            upload_button.disabled = True
+            progress_ring.visible = True
+            page.update()
+
+            file_content = io.BytesIO(e.files[0].read())
+            image = cv2.imdecode(np.frombuffer(file_content.read(), np.uint8), 1)
+            
+            analyzed_image, num_anomalies = analyze_xray(image)
+            
+            # تحويل الصورة المحللة إلى صيغة يمكن عرضها في Flet
+            is_success, buffer = cv2.imencode(".png", analyzed_image)
+            io_buf = io.BytesIO(buffer)
+            
+            result_image.src_base64 = Image.open(io_buf).tobytes()
+            result_image.visible = True
+            result_text.value = f"تم العثور على {num_anomalies} منطقة مشبوهة في الصورة."
+            result_text.visible = True
+            
+            upload_button.disabled = False
+            progress_ring.visible = False
+            page.update()
+
+    file_picker = ft.FilePicker(on_result=on_file_picked)
+    page.overlay.append(file_picker)
+
+    upload_button = ft.ElevatedButton(
+        "اختر صورة الأشعة السينية",
+        icon=ft.icons.UPLOAD_FILE,
+        on_click=lambda _: file_picker.pick_files(allow_multiple=False),
+        style=ft.ButtonStyle(
+            color=ft.colors.WHITE,
+            bgcolor=ft.colors.BLUE_600,
+            padding=20,
+        )
+    )
+
+    progress_ring = ft.ProgressRing(visible=False)
+
+    result_image = ft.Image(
+        visible=False,
+        fit=ft.ImageFit.CONTAIN,
+        width=400,
+        height=400,
+    )
+
+    result_text = ft.Text(
+        visible=False,
+        size=18,
+        color=ft.colors.GREEN_400,
+        weight=ft.FontWeight.BOLD,
+    )
+
+    page.add(
+        ft.Column(
             [
-                ft.Text("Music Player", size=30, weight=ft.FontWeight.BOLD),
-                ft.ElevatedButton("Add Songs", on_click=self.pick_files),
-                self.song_list,
-                self.song_title,
-                self.progress_bar,
-                ft.Row(
-                    [self.prev_button, self.play_button, self.next_button, self.shuffle_button],
-                    alignment=ft.MainAxisAlignment.CENTER,
-                ),
+                ft.Text("تحليل صور الأشعة السينية", size=32, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200),
+                ft.Text("قم برفع صورة الأشعة السينية لتحليلها وكشف المناطق المشبوهة.", size=16, color=ft.colors.GREY_400),
+                ft.Row([upload_button, progress_ring], alignment=ft.MainAxisAlignment.CENTER),
+                result_image,
+                result_text,
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=20,
         )
-
-    def pick_files(self, e):
-        pick_files_dialog = ft.FilePicker(on_result=self.pick_files_result)
-        self.page.overlay.append(pick_files_dialog)
-        self.page.update()
-        pick_files_dialog.pick_files(allow_multiple=True, file_type=ft.FilePickerFileType.AUDIO)
-
-    def pick_files_result(self, e: ft.FilePickerResultEvent):
-        if e.files:
-            for f in e.files:
-                self.songs.append(f.path)
-                self.song_list.controls.append(ft.Text(os.path.basename(f.path)))
-            self.update()
-
-    def play_pause(self, e):
-        if not self.songs:
-            return
-
-        if self.is_playing:
-            self.page.audio.pause()
-            self.play_button.icon = ft.icons.PLAY_ARROW
-            self.is_playing = False
-        else:
-            if self.page.audio.src != self.songs[self.current_song_index]:
-                self.page.audio.src = self.songs[self.current_song_index]
-            self.page.audio.play()
-            self.play_button.icon = ft.icons.PAUSE
-            self.is_playing = True
-            self.update_song_info()
-
-        self.play_button.update()
-
-    def next_song(self, e):
-        if not self.songs:
-            return
-
-        self.current_song_index = (self.current_song_index + 1) % len(self.songs)
-        self.play_song()
-
-    def prev_song(self, e):
-        if not self.songs:
-            return
-
-        self.current_song_index = (self.current_song_index - 1) % len(self.songs)
-        self.play_song()
-
-    def shuffle_playlist(self, e):
-        if not self.songs:
-            return
-
-        random.shuffle(self.songs)
-        self.current_song_index = 0
-        self.update_song_list()
-        self.play_song()
-
-    def play_song(self):
-        self.page.audio.src = self.songs[self.current_song_index]
-        self.page.audio.play()
-        self.play_button.icon = ft.icons.PAUSE
-        self.is_playing = True
-        self.play_button.update()
-        self.update_song_info()
-
-    def update_song_info(self):
-        self.song_title.value = os.path.basename(self.songs[self.current_song_index])
-        self.song_title.update()
-        self.update_progress_bar()
-
-    def update_progress_bar(self):
-        def update_progress(e):
-            if self.is_playing:
-                current_time = self.page.audio.get_current_position()
-                total_time = self.page.audio.get_duration()
-                if total_time > 0:
-                    self.progress_bar.value = current_time / total_time
-                    self.progress_bar.update()
-
-        self.page.audio.on_position_changed = update_progress
-
-    def update_song_list(self):
-        self.song_list.controls.clear()
-        for song in self.songs:
-            self.song_list.controls.append(ft.Text(os.path.basename(song)))
-        self.song_list.update()
-
-def main(page: ft.Page):
-    page.title = "Android Music Player"
-    page.window_width = 360  # Width suitable for most Android screens
-    page.window_height = 640  # Height suitable for most Android screens
-    page.window_resizable = False
-    page.update()
-
-    # Create audio object
-    page.audio = ft.Audio()
-
-    # Create and add music player to the page
-    music_player = MusicPlayer()
-    page.add(music_player)
+    )
 
 ft.app(target=main)
